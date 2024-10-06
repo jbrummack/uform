@@ -131,6 +131,17 @@ public class TextEncoder {
         )
     }
 
+    public init(model: MLModel, configPath: String? = nil, tokenizerPath: String? = nil) throws {
+        let finalConfigPath = configPath ?? modelPath + "/config.json"
+        let finalTokenizerPath = tokenizerPath ?? modelPath + "/tokenizer.json"
+        self.model = model
+        self.processor = try TextProcessor(
+            configPath: finalConfigPath,
+            tokenizerPath: finalTokenizerPath,
+            model: self.model
+        )
+    }
+
     /// Initializes a `TextEncoder` using a model name and an API for fetching models.
     /// - Parameters:
     ///   - modelName: The identifier for the model repository.
