@@ -191,6 +191,11 @@ public class ImageEncoder {
         self.model = try readModel(fromPath: modelPath)
         self.processor = try ImageProcessor(configPath: finalConfigPath)
     }
+    public init(model: MLModel, configPath: String? = nil) throws {
+        let finalConfigPath = configPath ?? Bundle.main.path(forResource: "config", ofType: "json")!
+        self.model = try readModel(fromPath: modelPath)
+        self.processor = try ImageProcessor(configPath: finalConfigPath)
+    }
 
     /// Initializes an `ImageEncoder` using a model name and an API for fetching models.
     /// - Parameters:
