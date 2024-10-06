@@ -137,8 +137,8 @@ public class TextEncoder {
         let tokenizerPath = Bundle.main.path(forResource: "tokenizer", ofType: "json")!
         self.model = model
         self.processor = try TextProcessor(
-            configPath: finalConfigPath,
-            tokenizerPath: finalTokenizerPath,
+            configPath: configPath,
+            tokenizerPath: tokenizerPath,
             model: self.model
         )
     }
