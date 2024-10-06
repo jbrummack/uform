@@ -131,9 +131,10 @@ public class TextEncoder {
         )
     }
 
-    public init(model: MLModel, configPath: String? = nil, tokenizerPath: String? = nil) throws {
-        let finalConfigPath = configPath ?? modelPath + "/config.json"
-        let finalTokenizerPath = tokenizerPath ?? modelPath + "/tokenizer.json"
+    public init(model: MLModel) throws {
+        
+        let configPath = Bundle.main.path(forResource: "config", ofType: "json")!
+        let tokenizerPath = Bundle.main.path(forResource: "tokenizer", ofType: "json")!
         self.model = model
         self.processor = try TextProcessor(
             configPath: finalConfigPath,
