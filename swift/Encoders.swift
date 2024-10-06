@@ -110,6 +110,11 @@ func readModel(fromPath path: String) throws -> MLModel {
     return try readModel(fromURL: modelURL)
 }
 
+enum LocalModelError: Error {
+    case noConfig
+    case noTokenizer
+}
+
 /// Encodes text input into embeddings using a machine learning model.
 public class TextEncoder {
     let model: MLModel
@@ -131,16 +136,25 @@ public class TextEncoder {
         )
     }
 
+    /// Initializes a `TextEncoder` using an MLModel.
     public init(model: MLModel) throws {
+        do {
+            guard let configPath = Bundle.main.path(forResource: "config", ofType: "json") else {
+                throw LocalModelError.noConfig
+            }
+            
+            // Safely unwrap tokenizer file path
+            guard let tokenizerPath = Bundle.main.path(forResource: "tokenizer", ofType: "json") else {
+                throw LocalModelError.noTokenizer
+            }
+            self.model = model
+            self.processor = try TextProcessor(
+                configPath: configPath,
+                tokenizerPath: tokenizerPath,
+                model: self.model
+            )
+        } catch {throw error}
         
-        let configPath = Bundle.main.path(forResource: "config", ofType: "json")!
-        let tokenizerPath = Bundle.main.path(forResource: "tokenizer", ofType: "json")!
-        self.model = model
-        self.processor = try TextProcessor(
-            configPath: configPath,
-            tokenizerPath: tokenizerPath,
-            model: self.model
-        )
     }
 
     /// Initializes a `TextEncoder` using a model name and an API for fetching models.
@@ -191,8 +205,12 @@ public class ImageEncoder {
         self.model = try readModel(fromPath: modelPath)
         self.processor = try ImageProcessor(configPath: finalConfigPath)
     }
+    
+    /// Initializes an `ImageEncoder` using a MLModel.
     public init(model: MLModel, configPath: String? = nil) throws {
-        let finalConfigPath = configPath ?? Bundle.main.path(forResource: "config", ofType: "json")!
+        guard let finalConfigPath = configPath ?? Bundle.main.path(forResource: "config", ofType: "json") else {
+            throw LocalModelError.noConfig
+        }
         self.model = model
         self.processor = try ImageProcessor(configPath: finalConfigPath)
     }
