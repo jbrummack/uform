@@ -135,6 +135,16 @@ public class TextEncoder {
             model: self.model
         )
     }
+    public init(model: MLModel, configPath: String, tokenizerPath: String) throws {
+        do {
+            self.model = model
+            self.processor = try TextProcessor(
+                configPath: configPath,
+                tokenizerPath: tokenizerPath,
+                model: self.model
+            )
+        } catch {throw error}
+    }
 
     /// Initializes a `TextEncoder` using an MLModel.
     public init(model: MLModel) throws {
